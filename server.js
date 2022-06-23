@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const axios = require('axios').default;
 var cors = require('cors')
 const app = express();
 app.use(express.json());
@@ -51,7 +52,9 @@ app.get('/users', async (req, res, next) => {
 // login
 app.post('/login', async (req, res, next) => {
   const payload = req.body;
+  console.log(payload)
   const { username, password } = payload;
+  console.log(res);
   if (!username || !password) return res.sendStatus(500);
   const currentUser = await User.findOne({
     username,
@@ -80,4 +83,14 @@ app.post('/register', async (req, res, next) => {
   res.json(currentUser);
 });
 
+
+// setInterval(() => {
+//   var d = new Date(); // for now
+// datetext = d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+//   console.log(datetext)
+//   if(datetext == "0:50:12"){
+//     console.log("12h45 roi")
+//     clearInterval(refreshIntervalId);
+//   }
+// }, 1000);
 app.listen(port, () => console.log('Server listening on port ' + port));
