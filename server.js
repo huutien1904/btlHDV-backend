@@ -12,7 +12,7 @@ app.use(cors())
 })
 const port = 3000;
 const dbUri =
-  'mongodb+srv://clone:clone@twitterclonecluster.cdhdf.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
+  'mongodb+srv://tien1904:pKgL0VNAxLsOHWma@pthdv.3nump97.mongodb.net/pthdv?retryWrites=true&w=majority';
 mongoose
   .connect(dbUri)
   .then(() => {
@@ -35,6 +35,7 @@ const UserSchema = new Schema(
       type: String,
       required: true,
     },
+    
   },
   {
     timestamps: true,
@@ -52,9 +53,7 @@ app.get('/users', async (req, res, next) => {
 // login
 app.post('/login', async (req, res, next) => {
   const payload = req.body;
-  console.log(payload)
   const { username, password } = payload;
-  console.log(res);
   if (!username || !password) return res.sendStatus(500);
   const currentUser = await User.findOne({
     username,
@@ -83,7 +82,33 @@ app.post('/register', async (req, res, next) => {
   res.json(currentUser);
 });
 
+axios.get('http://api.openweathermap.org/data/2.5/forecast?q=hanoi&appid=8e4352972abe8bd8c4f7617a5ad35876&units=metric&lang=vi&cnt=5')
+  .then(function (response) {
+    // handle success
+    console.log(response.data.list.map((item) => {
+      console.log(item)
+    }));
+  })
+  .catch(function (error) {
+    // handle error
+    console.log(error);
+  })
+  .then(function () {
+    // always executed
+  });
 
+  axios.get('http://localhost:3000/users')
+  .then(function (response) {
+    // handle success
+    console.log(response.data[0])
+  })
+  .catch(function (error) {
+    // handle error
+    console.log(error);
+  })
+  .then(function () {
+    // always executed
+  });
 // setInterval(() => {
 //   var d = new Date(); // for now
 // datetext = d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
