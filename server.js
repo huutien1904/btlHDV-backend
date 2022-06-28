@@ -82,12 +82,74 @@ app.post('/register', async (req, res, next) => {
   res.json(currentUser);
 });
 
-axios.get('http://api.openweathermap.org/data/2.5/forecast?q=hanoi&appid=8e4352972abe8bd8c4f7617a5ad35876&units=metric&lang=vi&cnt=5')
+// get data weather 
+var data = "";
+axios.get('http://api.openweathermap.org/data/2.5/weather?q=hanoi&appid=8e4352972abe8bd8c4f7617a5ad35876&units=metric&lang=vi')
   .then(function (response) {
     // handle success
-    console.log(response.data.list.map((item) => {
-      console.log(item)
-    }));
+    console.log(response.data);
+    var today = new Date();
+          const yyyy = today.getFullYear();
+          let mm = today.getMonth() + 1; // Months start at 0!
+          let dd = today.getDate();
+    var today1 = dd + '/' + mm + '/' + yyyy;
+    var nhietDo = Math.round(response.data.main.temp) ;
+          var nhietDoMax = Math.round(response.data.main.temp_max);
+          var nhietDoMix = Math.round(response.data.main.temp_min);
+          var tocDOGio = response.data.wind.speed
+    data+=`
+
+        Dự báo thời tiết ${response.data}  Ngày ${today1}
+          
+          Hiện tại trời đang ${response.data.weather[0].description} , 
+
+          Nhiệt độ hiện tại đang là ${nhietDo} độ, 
+  
+          Nhiệt độ cao nhất trong ngày là ${nhietDoMax},
+  
+          Nhiệt độ thấp nhất trong ngày là ${nhietDoMix},
+  
+          Tốc độ gió là ${tocDOGio} km/h`
+    
+          setInterval(() => {
+            var d = new Date(); // for now
+          datetext = d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+            console.log(data)
+            if(datetext == "0:24:52"){
+              axios.get(`https://api.telegram.org/bot5266462345:AAEVJbKywp7k8WTph33R6LE9Q_l4YpjMiFo/sendMessage?chat_id=-1001598164577&text=${data}`)
+            .then(function (response) {
+              // handle success
+              console.log(response)
+              
+            })
+            .catch(function (error) {
+              // handle error
+              console.log(error);
+            })
+            .then(function () {
+              // always executed
+            });
+              console.log("12h45 roi")
+              
+              console.log(data);
+              // clearInterval(refreshIntervalId);
+            }
+          }, 1000);
+  })
+  .catch(function (error) {
+    // handle error
+    console.log(error);
+  })
+  .then(function () {
+    // always executed
+  });
+  
+
+  axios.get('http://localhost:3000/users')
+  .then(function (response) {
+    // handle success
+    // console.log(response.data[0])
+    
   })
   .catch(function (error) {
     // handle error
@@ -97,25 +159,4 @@ axios.get('http://api.openweathermap.org/data/2.5/forecast?q=hanoi&appid=8e43529
     // always executed
   });
 
-  axios.get('http://localhost:3000/users')
-  .then(function (response) {
-    // handle success
-    console.log(response.data[0])
-  })
-  .catch(function (error) {
-    // handle error
-    console.log(error);
-  })
-  .then(function () {
-    // always executed
-  });
-// setInterval(() => {
-//   var d = new Date(); // for now
-// datetext = d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
-//   console.log(datetext)
-//   if(datetext == "0:50:12"){
-//     console.log("12h45 roi")
-//     clearInterval(refreshIntervalId);
-//   }
-// }, 1000);
 app.listen(port, () => console.log('Server listening on port ' + port));
