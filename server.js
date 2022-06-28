@@ -82,7 +82,8 @@ app.post('/register', async (req, res, next) => {
   res.json(currentUser);
 });
 
-// get data weather 
+// get data weather
+var frag = false; 
 var data = "";
 axios.get('http://api.openweathermap.org/data/2.5/weather?q=hanoi&appid=8e4352972abe8bd8c4f7617a5ad35876&units=metric&lang=vi')
   .then(function (response) {
@@ -99,27 +100,31 @@ axios.get('http://api.openweathermap.org/data/2.5/weather?q=hanoi&appid=8e435297
           var tocDOGio = response.data.wind.speed
     data+=`
 
-        Dự báo thời tiết ${response.data}  Ngày ${today1}
-          
-          Hiện tại trời đang ${response.data.weather[0].description} , 
-
-          Nhiệt độ hiện tại đang là ${nhietDo} độ, 
-  
-          Nhiệt độ cao nhất trong ngày là ${nhietDoMax},
-  
-          Nhiệt độ thấp nhất trong ngày là ${nhietDoMix},
-  
-          Tốc độ gió là ${tocDOGio} km/h`
-    
+        Dự báo thời tiết ${response.data.name}  Ngày ${today1}
+        Hiện tại trời đang ${response.data.weather[0].description} , 
+        Nhiệt độ hiện tại đang là ${nhietDo} độ, 
+        Nhiệt độ cao nhất trong ngày là ${nhietDoMax},
+        Nhiệt độ thấp nhất trong ngày là ${nhietDoMix},
+        Tốc độ gió là ${tocDOGio} km/h`
+    console.log(data)
+    // if(encodeURI(data).search(/29/) !== -1){
+    //   console.log("cos mua nhe")
+    // }
+    var check = data.indexOf("mưa")
+    if(check !== -1){
+      
+    }
+    console.log(check)
           setInterval(() => {
             var d = new Date(); // for now
           datetext = d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
-            console.log(data)
-            if(datetext == "0:24:52"){
-              axios.get(`https://api.telegram.org/bot5266462345:AAEVJbKywp7k8WTph33R6LE9Q_l4YpjMiFo/sendMessage?chat_id=-1001598164577&text=${data}`)
+            // console.log(data)
+            if(datetext == "0:55:52"){
+              axios.get(`https://api.telegram.org/bot5266462345:AAEVJbKywp7k8WTph33R6LE9Q_l4YpjMiFo/sendMessage?chat_id=-1001598164577&text=${encodeURI(data)}`)
             .then(function (response) {
               // handle success
               console.log(response)
+              frag = true;
               
             })
             .catch(function (error) {
@@ -144,7 +149,10 @@ axios.get('http://api.openweathermap.org/data/2.5/weather?q=hanoi&appid=8e435297
     // always executed
   });
   
-
+if(frag == true){
+  clearInterval(refreshIntervalId);
+  frag = false;
+}
   axios.get('http://localhost:3000/users')
   .then(function (response) {
     // handle success
